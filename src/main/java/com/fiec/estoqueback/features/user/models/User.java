@@ -4,13 +4,17 @@ package com.fiec.estoqueback.features.user.models;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 //@Table(name = "users")
 @Data // Lombok: Gera Getters, Setters, toString, etc.
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,4 +36,14 @@ public class User {
 
     @Column
     private String picture;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(accessLevel);
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

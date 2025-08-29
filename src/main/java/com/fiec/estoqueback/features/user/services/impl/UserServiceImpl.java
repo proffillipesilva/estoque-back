@@ -4,6 +4,9 @@ import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.features.user.repositories.UserRepository;
 import com.fiec.estoqueback.features.user.services.UserService;
 import com.fiec.estoqueback.utils.PasswordEncryptor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     //private final PasswordEncoder passwordEncoder;
@@ -64,5 +67,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email).orElseThrow();
     }
 }
