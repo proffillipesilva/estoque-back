@@ -1,5 +1,6 @@
 package com.fiec.estoqueback.utils;
 
+import com.fiec.estoqueback.features.user.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -36,6 +37,14 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    public String generateTokenComplete(User user) {
+        HashMap<String, Object> extraInfos = new HashMap<>();
+        extraInfos.put("name", user.getName());
+        extraInfos.put("picture", user.getPicture());
+        extraInfos.put("accessLevel", user.getAccessLevel().name());
+        return generateToken(extraInfos, user);
+    }
+
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
@@ -52,6 +61,7 @@ public class JwtService {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
+
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
