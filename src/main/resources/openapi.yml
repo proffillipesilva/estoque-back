@@ -47,8 +47,95 @@ paths:
                 $ref: '#/components/schemas/User'
         '401':
           description: Credenciais inválidas
+
+
+
+  /users/admin:
+    post:
+      summary: Registra um novo administrador
+      operationId: registerAdmin
+      requestBody:
+        description: Dados do administrador a ser registrado
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAdminDto'
+      responses:
+        '201':
+          description: Usuário administrador criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatedUserResponseDto'
+        '400':
+          description: Requisição inválida (falha na validação)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timestamp:
+                    type: string
+                    format: date-time
+                  status:
+                    type: integer
+                  error:
+                    type: string
+                  message:
+                    type: string
+                  path:
+                    type: string
 components:
   schemas:
+    UserDto:
+      type: object
+      properties:
+        email:
+          type: string
+          description: Endereço de e-mail do usuário.
+          example: usuario@exemplo.com
+          format: email
+        password:
+          type: string
+          description: Senha do usuário.
+          example: Senha123!
+          pattern: '^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};'':"\\|,.<>/?]).{8,}$'
+          minLength: 8
+    RegisterAdminDto:
+      allOf:
+        - $ref: '#/components/schemas/UserDto'
+        - type: object
+          required:
+            - cnpj
+          properties:
+            cnpj:
+              type: string
+              description: Número de CNPJ do administrador.
+              example: '12.345.678/0001-90'
+            nomeDaEmpresa:
+              type: string
+              description: Nome da empresa.
+              example: Empresa Ltda.
+              minLength: 3
+              maxLength: 40
+            ramoAtuacao:
+              type: string
+              description: Ramo de atuação da empresa.
+              example: Tecnologia
+    CreatedUserResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do usuário criado.
+        email:
+          type: string
+          format: email
+          description: Endereço de e-mail do usuário criado.
+
+
     RegisterRequest:
       type: object
       properties:

@@ -3,13 +3,17 @@ package com.fiec.estoqueback.features.user.models;
 import com.fiec.estoqueback.features.product.models.Product;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
-public class Supplier {
+public class Guest extends SystemUser{
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
@@ -25,7 +29,7 @@ public class Supplier {
 
     String number;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "supplier")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "guest")
     List<Product> products;
 
     @OneToOne

@@ -8,7 +8,6 @@ import com.fiec.estoqueback.features.user.models.UserLevel;
 import com.fiec.estoqueback.features.user.services.UserService;
 import com.fiec.estoqueback.utils.PasswordEncryptor;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        user.setAccessLevel(UserLevel.USER); // Define o nível de acesso padrão
+        user.setAccessLevel(UserLevel.ROLE_USER); // Define o nível de acesso padrão
         user.setPicture(request.getPicture());
 
         return userService.save(user);

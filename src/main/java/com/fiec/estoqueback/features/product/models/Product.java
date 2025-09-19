@@ -1,6 +1,6 @@
 package com.fiec.estoqueback.features.product.models;
 
-import com.fiec.estoqueback.features.user.models.Supplier;
+import com.fiec.estoqueback.features.user.models.Guest;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,7 +16,7 @@ public class Product {
     private UUID id;
 
     @ManyToOne
-    Supplier supplier;
+    Guest guest;
 
 
 }

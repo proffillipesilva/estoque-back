@@ -1,13 +1,20 @@
 package com.fiec.estoqueback.features.user.services.impl;
 
+import com.fiec.estoqueback.features.user.dto.CreatedUserResponseDto;
+import com.fiec.estoqueback.features.user.dto.RegisterAdminDto;
+import com.fiec.estoqueback.features.user.dto.RegisterGuestDto;
+import com.fiec.estoqueback.features.user.dto.RegisterStandardDto;
+import com.fiec.estoqueback.features.user.models.Admin;
 import com.fiec.estoqueback.features.user.models.User;
+import com.fiec.estoqueback.features.user.models.UserLevel;
+import com.fiec.estoqueback.features.user.repositories.AdminRepository;
 import com.fiec.estoqueback.features.user.repositories.UserRepository;
 import com.fiec.estoqueback.features.user.services.UserService;
 import com.fiec.estoqueback.utils.PasswordEncryptor;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +22,14 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final AdminRepository adminRepository;
     //private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-        //this.passwordEncoder = passwordEncoder;
-    }
+
 
     @Override
     public User save(User user) {
@@ -62,6 +68,38 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             }
             return userRepository.save(user);
         }).orElseThrow(() -> new RuntimeException("Usuário não encontrado com o ID: " + id));
+    }
+
+    @Override
+    public CreatedUserResponseDto saveAdmin(RegisterAdminDto registerAdminDto) {
+        String email = registerAdminDto.getEmail();
+        if(findByEmail(email).isPresent()){
+            throw new RuntimeException();
+        }
+        User user = new User();
+        user.setEmail(registerAdminDto.getEmail());
+        user.setPassword(registerAdminDto.getPassword());
+        user.setAccessLevel(UserLevel.ROLE_ADMIN);
+        User savedUser = save(user);
+        Admin admin = new Admin();
+        admin.setUser(savedUser);
+        admin.setCnpj(registerAdminDto.getCnpj());
+        admin.setRamoAtuacao(registerAdminDto.getRamoAtuacao());
+        Admin savedAdmin = adminRepository.save(admin);
+        return CreatedUserResponseDto.builder()
+                .id(String.valueOf(savedAdmin.getId()))
+                .userId(String.valueOf(savedUser.getId()))
+                .build();
+    }
+
+    @Override
+    public void saveStandard(RegisterStandardDto registerStandardDto) {
+
+    }
+
+    @Override
+    public void saveGuest(RegisterGuestDto registerGuestDto) {
+
     }
 
     @Override
