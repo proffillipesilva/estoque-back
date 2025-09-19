@@ -4,10 +4,10 @@ import com.fiec.estoqueback.features.user.dto.CreatedUserResponseDto;
 import com.fiec.estoqueback.features.user.dto.RegisterAdminDto;
 import com.fiec.estoqueback.features.user.dto.RegisterGuestDto;
 import com.fiec.estoqueback.features.user.dto.RegisterStandardDto;
-import com.fiec.estoqueback.features.user.models.Admin;
-import com.fiec.estoqueback.features.user.models.User;
-import com.fiec.estoqueback.features.user.models.UserLevel;
+import com.fiec.estoqueback.features.user.models.*;
 import com.fiec.estoqueback.features.user.repositories.AdminRepository;
+import com.fiec.estoqueback.features.user.repositories.GuestRepository;
+import com.fiec.estoqueback.features.user.repositories.StandardRepository;
 import com.fiec.estoqueback.features.user.repositories.UserRepository;
 import com.fiec.estoqueback.features.user.services.UserService;
 import com.fiec.estoqueback.utils.PasswordEncryptor;
@@ -27,6 +27,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final AdminRepository adminRepository;
+    private final GuestRepository guestRepository;
+    private final StandardRepository standardRepository;
+
+
     //private final PasswordEncoder passwordEncoder;
 
 
@@ -93,13 +97,47 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void saveStandard(RegisterStandardDto registerStandardDto) {
-
+    public CreatedUserResponseDto saveStandard(RegisterStandardDto registerStandardDto) {
+        String email = registerStandardDto.getEmail();
+        if(findByEmail(email).isPresent()){
+            throw new RuntimeException();
+        }
+        User user = new User();
+        user.setEmail(registerStandardDto.getEmail());
+        user.setPassword(registerStandardDto.getPassword());
+        user.setAccessLevel(UserLevel.ROLE_USER);
+        User savedUser = save(user);
+        Standard standard = new Standard();
+        standard.setUser(savedUser);
+        standard.setCnpj(registerStandardDto.getCnpj());
+        standard.setRamoAtuacao(registerStandardDto.getRamoAtuacao());
+        Standard savedStandard = standardRepository.save(standard);
+        return CreatedUserResponseDto.builder()
+                .id(String.valueOf(savedStandard.getId()))
+                .userId(String.valueOf(savedUser.getId()))
+                .build();
     }
 
     @Override
-    public void saveGuest(RegisterGuestDto registerGuestDto) {
-
+    public CreatedUserResponseDto saveGuest(RegisterGuestDto registerGuestDto) {
+        String email = registerGuestDto.getEmail();
+        if(findByEmail(email).isPresent()){
+            throw new RuntimeException();
+        }
+        User user = new User();
+        user.setEmail(registerGuestDto.getEmail());
+        user.setPassword(registerGuestDto.getPassword());
+        user.setAccessLevel(UserLevel.ROLE_ADMIN);
+        User savedUser = save(user);
+        Guest guest = new Guest();
+        guest.setUser(savedUser);
+        guest.setCpfOrCnpj(registerGuestDto.getCpfOrCnpj());
+        guest.setName(registerGuestDto.getName());
+        Guest savedGuest = guestRepository.save(guest);
+        return CreatedUserResponseDto.builder()
+                .id(String.valueOf(savedGuest.getId()))
+                .userId(String.valueOf(savedUser.getId()))
+                .build();
     }
 
     @Override

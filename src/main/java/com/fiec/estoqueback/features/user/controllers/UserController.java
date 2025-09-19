@@ -25,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/standard")
-    public void registerStandard(@Valid @RequestBody RegisterStandardDto registerStandardDto){
-
+    public CreatedUserResponseDto registerStandard(@Valid @RequestBody RegisterStandardDto registerStandardDto){
+        return userService.saveStandard(registerStandardDto);
     }
 
     @PostMapping("/guest")

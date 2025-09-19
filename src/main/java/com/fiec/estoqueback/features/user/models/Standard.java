@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-public class Standard extends SystemUser{
+public class Standard extends SystemUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

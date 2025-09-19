@@ -18,8 +18,8 @@ public interface UserService {
     List<User> findAll();
     User update(UUID id, User updatedUser);
     CreatedUserResponseDto saveAdmin(RegisterAdminDto registerAdminDto);
-    void saveStandard(RegisterStandardDto registerStandardDto);
-    void saveGuest(RegisterGuestDto registerGuestDto);
+    CreatedUserResponseDto saveStandard(RegisterStandardDto registerStandardDto);
+    CreatedUserResponseDto saveGuest(RegisterGuestDto registerGuestDto);
 
     void deleteById(UUID id);
 }

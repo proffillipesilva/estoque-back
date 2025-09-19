@@ -24,9 +24,6 @@ public class Admin extends SystemUser{
 
     String ramoAtuacao;
 
-    @OneToOne
-    User user;
-
     @ManyToMany
     @JoinTable(
             name = "guest_admin_relationship",
