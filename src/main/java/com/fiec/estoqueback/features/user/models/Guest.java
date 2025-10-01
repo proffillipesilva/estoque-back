@@ -2,22 +2,19 @@ package com.fiec.estoqueback.features.user.models;
 
 import com.fiec.estoqueback.features.product.models.Product;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
 public class Guest extends SystemUser{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+
 
     String cpfOrCnpj;
 
@@ -34,5 +31,6 @@ public class Guest extends SystemUser{
 
     @ManyToMany
     List<Admin> admins;
+
 
 }

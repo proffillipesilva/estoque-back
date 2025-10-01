@@ -13,10 +13,7 @@ import java.util.UUID;
 @Entity
 public class Standard extends SystemUser {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(updatable = false, nullable = false)
-    private UUID id;
+
 
     String cnpj;
 
