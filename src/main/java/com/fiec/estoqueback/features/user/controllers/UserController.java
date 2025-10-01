@@ -1,15 +1,13 @@
 package com.fiec.estoqueback.features.user.controllers;
 
-import com.fiec.estoqueback.features.user.dto.CreatedUserResponseDto;
-import com.fiec.estoqueback.features.user.dto.RegisterAdminDto;
-import com.fiec.estoqueback.features.user.dto.RegisterGuestDto;
-import com.fiec.estoqueback.features.user.dto.RegisterStandardDto;
+import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.Admin;
 import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.features.user.models.UserLevel;
 import com.fiec.estoqueback.features.user.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+
 
     @PostMapping("/admin")
     public CreatedUserResponseDto registerAdmin(@Valid @RequestBody RegisterAdminDto registerAdminDto) throws Exception {
@@ -33,4 +33,12 @@ public class UserController {
     public void registerGuest(@Valid @RequestBody RegisterGuestDto registerGuestDto){
 
     }
+
+    @GetMapping("/me")
+    public MyUserDto getMe(Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        return userService.getMe(user);
+    }
+
+
 }

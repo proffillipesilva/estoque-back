@@ -1,10 +1,7 @@
 package com.fiec.estoqueback.features.user.services;
 
 
-import com.fiec.estoqueback.features.user.dto.CreatedUserResponseDto;
-import com.fiec.estoqueback.features.user.dto.RegisterAdminDto;
-import com.fiec.estoqueback.features.user.dto.RegisterGuestDto;
-import com.fiec.estoqueback.features.user.dto.RegisterStandardDto;
+import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.User;
 
 import java.util.List;
@@ -22,4 +19,6 @@ public interface UserService {
     CreatedUserResponseDto saveGuest(RegisterGuestDto registerGuestDto);
 
     void deleteById(UUID id);
+
+    MyUserDto getMe(User user);
 }

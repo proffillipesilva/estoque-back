@@ -1,9 +1,6 @@
 package com.fiec.estoqueback.features.user.services.impl;
 
-import com.fiec.estoqueback.features.user.dto.CreatedUserResponseDto;
-import com.fiec.estoqueback.features.user.dto.RegisterAdminDto;
-import com.fiec.estoqueback.features.user.dto.RegisterGuestDto;
-import com.fiec.estoqueback.features.user.dto.RegisterStandardDto;
+import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.*;
 import com.fiec.estoqueback.features.user.repositories.AdminRepository;
 import com.fiec.estoqueback.features.user.repositories.GuestRepository;
@@ -89,6 +86,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         admin.setUser(savedUser);
         admin.setCnpj(registerAdminDto.getCnpj());
         admin.setRamoAtuacao(registerAdminDto.getRamoAtuacao());
+        admin.setNomeDaEmpresa(registerAdminDto.getNomeDaEmpresa());
         Admin savedAdmin = adminRepository.save(admin);
         return CreatedUserResponseDto.builder()
                 .id(String.valueOf(savedAdmin.getId()))
@@ -105,7 +103,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = new User();
         user.setEmail(registerStandardDto.getEmail());
         user.setPassword(registerStandardDto.getPassword());
-        user.setAccessLevel(UserLevel.ROLE_USER);
+        user.setAccessLevel(UserLevel.ROLE_STANDARD);
         User savedUser = save(user);
         Standard standard = new Standard();
         standard.setUser(savedUser);
@@ -143,6 +141,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public MyUserDto getMe(User user) {
+        UserLevel tipoUsuario = user.getAccessLevel();
+        MyUserDto myUserDto = null;
+        if(UserLevel.ROLE_ADMIN.equals(tipoUsuario)){
+            Admin admin = adminRepository.findByUser(user).orElseThrow();
+            myUserDto = new MyUserDto();
+            myUserDto.setCnpj(admin.getCnpj());
+            myUserDto.setNomeDaEmpresa(admin.getNomeDaEmpresa());
+            myUserDto.setTipo("ADMIN");
+        } else if(UserLevel.ROLE_STANDARD.equals(tipoUsuario)){
+            Standard standard = standardRepository.findByUser(user).orElseThrow();
+            myUserDto = new MyUserDto();
+            myUserDto.setCnpj(standard.getCnpj());
+            myUserDto.setNomeDaEmpresa(standard.getNomeDaEmpresa());
+            myUserDto.setTipo("STANDARD");
+        } else {
+            Guest guest = guestRepository.findByUser(user).orElseThrow();
+            myUserDto = new MyUserDto();
+            myUserDto.setCnpj(guest.getCpfOrCnpj());
+            myUserDto.setNome(guest.getName());
+            myUserDto.setTipo("GUEST");
+        }
+        myUserDto.setPicture(user.getPicture());
+        myUserDto.setEmail(user.getEmail());
+        return myUserDto;
     }
 
     @Override

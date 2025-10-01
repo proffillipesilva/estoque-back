@@ -14,8 +14,6 @@ import java.util.UUID;
 @Entity
 public class Guest extends SystemUser{
 
-
-
     String cpfOrCnpj;
 
     String name;
