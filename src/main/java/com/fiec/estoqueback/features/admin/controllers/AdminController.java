@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/api/admin")
 public class AdminController {
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/test")
     public void testRequest(Authentication authentication){
         User user = (User) authentication.getPrincipal();
