@@ -1,9 +1,7 @@
 package com.fiec.estoqueback.features.user.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -11,6 +9,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class Standard extends SystemUser {
 
 

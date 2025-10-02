@@ -5,10 +5,12 @@ import com.fiec.estoqueback.features.user.models.Admin;
 import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.features.user.models.UserLevel;
 import com.fiec.estoqueback.features.user.services.UserService;
+import com.fiec.estoqueback.utils.ImageUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/v1/api/users")
@@ -38,6 +40,14 @@ public class UserController {
     public MyUserDto getMe(Authentication authentication){
         User user = (User) authentication.getPrincipal();
         return userService.getMe(user);
+    }
+
+    @PutMapping("/photo")
+    public void insertUserImage(@RequestParam("image") MultipartFile image, Authentication authentication){
+        User user = (User) authentication.getPrincipal();
+        String imageName = ImageUtils.saveImage(image);
+        user.setPicture(imageName);
+        userService.save(user);
     }
 
 

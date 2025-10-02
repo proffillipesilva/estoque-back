@@ -35,3 +35,8 @@ build/
 ./mvnw
 .mvn
 
+uploads
+uploads/*
+thumbnails
+thumbnails/*
+
