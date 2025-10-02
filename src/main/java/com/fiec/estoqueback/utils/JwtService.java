@@ -42,6 +42,8 @@ public class JwtService {
         extraInfos.put("name", user.getName());
         extraInfos.put("picture", user.getPicture());
         extraInfos.put("accessLevel", user.getAccessLevel().name());
+        extraInfos.put("registerState", user.getState());
+
         return generateToken(extraInfos, user);
     }
 
