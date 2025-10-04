@@ -2,6 +2,7 @@ package com.fiec.estoqueback.features.user.controllers;
 
 import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.Admin;
+import com.fiec.estoqueback.features.user.models.RegisterState;
 import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.features.user.models.UserLevel;
 import com.fiec.estoqueback.features.user.services.UserService;
@@ -47,6 +48,7 @@ public class UserController {
         User user = (User) authentication.getPrincipal();
         String imageName = ImageUtils.saveImage(image);
         user.setPicture(imageName);
+        user.setState(RegisterState.IMAGE_CREATED);
         userService.save(user);
     }
 
