@@ -1,6 +1,7 @@
 package com.fiec.estoqueback.features.user.services;
 
 
+import com.fiec.estoqueback.features.firebase.models.dto.FcmTokenRequest;
 import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.User;
 
@@ -21,4 +22,6 @@ public interface UserService {
     void deleteById(UUID id);
 
     MyUserDto getMe(User user);
+
+    User updateFcmToken(UUID userId, FcmTokenRequest request);
 }

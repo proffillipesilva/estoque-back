@@ -1,5 +1,6 @@
 package com.fiec.estoqueback.features.user.services.impl;
 
+import com.fiec.estoqueback.features.firebase.models.dto.FcmTokenRequest;
 import com.fiec.estoqueback.features.user.dto.*;
 import com.fiec.estoqueback.features.user.models.*;
 import com.fiec.estoqueback.features.user.repositories.AdminRepository;
@@ -175,5 +176,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).orElseThrow();
+    }
+
+    /**
+     * Busca o usuário e atualiza seu fcmToken.
+     * @param userId O ID do usuário logado.
+     * @param request O DTO contendo o novo token FCM.
+     * @return O User atualizado.
+     * @throws RuntimeException Se o usuário não for encontrado.
+     */
+
+    public User updateFcmToken(UUID userId, FcmTokenRequest request) {
+
+        // 1. Busca o usuário pelo ID
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
+
+        System.out.println(userId);
+        // 2. Atualiza o atributo fcmToken
+        user.setFcmToken(request.getFcmToken());
+
+        // 3. Salva a alteração (o @Transactional garante que a persistência ocorra)
+        return userRepository.save(user);
     }
 }

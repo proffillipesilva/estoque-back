@@ -43,6 +43,9 @@ public class User implements UserDetails {
     private String picture;
 
     @Column
+    private String fcmToken;
+
+    @Column
     private RegisterState state;
 
     @Override
