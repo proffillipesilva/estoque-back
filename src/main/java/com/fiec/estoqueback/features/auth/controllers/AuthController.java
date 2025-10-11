@@ -7,6 +7,7 @@ import com.fiec.estoqueback.features.auth.services.AuthService;
 import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.utils.JwtService;
 import io.jsonwebtoken.Jwt;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/api/auth")
 public class AuthController {
@@ -37,11 +39,15 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+
+        log.info("AuthController - login - usuario tentou logar com {}", request);
+
         User loggedInUser = authService.login(request);
         String jwtToken = this.jwtService.generateTokenComplete(loggedInUser);
         LoginResponse response = new LoginResponse();
         response.setToken(jwtToken);
         return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
 
     @PostMapping("/loginprova")
