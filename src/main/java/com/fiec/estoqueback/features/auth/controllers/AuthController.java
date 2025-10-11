@@ -40,7 +40,6 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
 
-        log.info("AuthController - login - usuario tentou logar com {}", request);
 
         User loggedInUser = authService.login(request);
         String jwtToken = this.jwtService.generateTokenComplete(loggedInUser);
