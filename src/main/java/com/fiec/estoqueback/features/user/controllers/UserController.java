@@ -6,6 +6,7 @@ import com.fiec.estoqueback.features.user.models.RegisterState;
 import com.fiec.estoqueback.features.user.models.User;
 import com.fiec.estoqueback.features.user.models.UserLevel;
 import com.fiec.estoqueback.features.user.services.UserService;
+import com.fiec.estoqueback.shared.service.S3Service;
 import com.fiec.estoqueback.utils.ImageUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -13,12 +14,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/v1/api/users")
 @AllArgsConstructor
 public class UserController {
 
     private final UserService userService;
+    private final S3Service s3Service;
 
 
 
@@ -44,9 +48,10 @@ public class UserController {
     }
 
     @PutMapping("/photo")
-    public void insertUserImage(@RequestParam("image") MultipartFile image, Authentication authentication){
+    public void insertUserImage(@RequestParam("image") MultipartFile image, Authentication authentication) throws IOException {
         User user = (User) authentication.getPrincipal();
-        String imageName = ImageUtils.saveImage(image);
+        //String imageName = ImageUtils.saveImage(image);
+        String imageName = s3Service.uploadFile(image);
         user.setPicture(imageName);
         user.setState(RegisterState.IMAGE_CREATED);
         userService.save(user);

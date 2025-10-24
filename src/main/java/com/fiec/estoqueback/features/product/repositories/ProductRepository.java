@@ -1,0 +1,9 @@
+package com.fiec.estoqueback.features.product.repositories;
+
+import com.fiec.estoqueback.features.product.models.Product;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.UUID;
+
+public interface ProductRepository extends JpaRepository<Product, UUID>, ProductCustomRepository {
+}

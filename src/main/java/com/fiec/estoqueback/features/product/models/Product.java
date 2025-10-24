@@ -1,9 +1,12 @@
 package com.fiec.estoqueback.features.product.models;
 
+import com.fiec.estoqueback.features.product.models.enums.TipoMedida;
 import com.fiec.estoqueback.features.user.models.Guest;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Data
@@ -15,8 +18,25 @@ public class Product {
     @Column(updatable = false, nullable = false)
     private UUID id;
 
-    @ManyToOne
-    Guest guest;
+    private String nome;
+
+    private String descricao;
+
+    private Double preco;
+
+    private Double quantidade;
+
+    private TipoMedida tipoMedida;
+
+    private String imagem;
+
+    private Date dataDeSubmissao;
+
+    @CreationTimestamp
+    private Date dataDeCriacao;
+
+
+    private String guestName;
 
 
 }

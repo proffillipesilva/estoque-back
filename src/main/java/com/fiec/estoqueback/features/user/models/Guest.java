@@ -24,8 +24,7 @@ public class Guest extends SystemUser{
 
     String number;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "guest")
-    List<Product> products;
+
 
     @ManyToMany
     List<Admin> admins;
