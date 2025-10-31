@@ -9,12 +9,19 @@ import com.fiec.estoqueback.features.user.repositories.StandardRepository;
 import com.fiec.estoqueback.features.user.repositories.UserRepository;
 import com.fiec.estoqueback.features.user.services.UserService;
 import com.fiec.estoqueback.utils.PasswordEncryptor;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -198,5 +205,81 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // 3. Salva a alteração (o @Transactional garante que a persistência ocorra)
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional // quero tudo ou nada
+    public void createUsers(InputStream inputStream) {
+
+
+        List<UserCsvRepresentation> users = new ArrayList<>();
+        try (Reader reader = new InputStreamReader(inputStream)) {
+
+            // Create a CsvToBean object from the Reader
+            CsvToBean<UserCsvRepresentation> csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(UserCsvRepresentation.class) // Specify the target bean class
+                    .withIgnoreLeadingWhiteSpace(true) // Clean up any extra spaces
+                    .withSkipLines(0) // Skips the header row if present
+                    .build();
+
+            // Parse the data and return a List of beans
+            users = csvToBean.parse();
+        } catch (Exception e) {
+            // Handle IO or CSV parsing exceptions
+            throw new RuntimeException("Failed to parse CSV file: " + e.getMessage(), e);
+        }
+
+        try {
+
+            for (UserCsvRepresentation csvUser : users) {
+                User user = new User();
+                user.setEmail(csvUser.getEmail());
+                user.setName(csvUser.getName());
+                user.setPassword(PasswordEncryptor.encrypt(csvUser.getPassword()));
+                UserLevel level = UserLevel.valueOf("ROLE_" + csvUser.getAccessLevel());
+                user.setAccessLevel(level);
+                save(user);
+                switch (level) {
+                    case UserLevel.ROLE_STANDARD:
+                        Standard standard = new Standard();
+
+                        standard.setUser(user);
+                        standard.setCnpj(csvUser.getCnpj());
+                        standard.setNomeDaEmpresa(csvUser.getNomeDaEmpresa());
+                        standard.setRamoAtuacao(csvUser.getRamoAtuacao());
+                        standardRepository.save(standard);
+                        break;
+                    case UserLevel.ROLE_ADMIN:
+                        Admin admin = new Admin();
+
+                        admin.setUser(user);
+                        admin.setCnpj(csvUser.getCnpj());
+                        admin.setNomeDaEmpresa(csvUser.getNomeDaEmpresa());
+                        admin.setRamoAtuacao(csvUser.getRamoAtuacao());
+                        adminRepository.save(admin);
+                        break;
+
+                    case UserLevel.ROLE_GUEST:
+                        Guest guest = new Guest();
+                        guest.setUser(user);
+                        guest.setCity(csvUser.getCity());
+                        guest.setCpfOrCnpj(csvUser.getCpfOrCnpj());
+                        guest.setNumber(csvUser.getNumber());
+                        guest.setZipCode(csvUser.getZipCode());
+                        guestRepository.save(guest);
+
+                        break;
+                    default:
+                        break;
+
+                }
+
+            }
+        }catch (Exception ex){
+            throw new RuntimeException("Failed to parse CSV file: " + ex.getMessage(), ex);
+
+        }
+
+
     }
 }

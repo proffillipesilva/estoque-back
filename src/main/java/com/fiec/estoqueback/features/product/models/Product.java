@@ -32,6 +32,8 @@ public class Product {
 
     private Date dataDeSubmissao;
 
+    private Long lote;
+
     @CreationTimestamp
     private Date dataDeCriacao;
 

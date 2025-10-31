@@ -10,6 +10,7 @@ import com.fiec.estoqueback.shared.service.S3Service;
 import com.fiec.estoqueback.utils.ImageUtils;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +40,12 @@ public class UserController {
     @PostMapping("/guest")
     public void registerGuest(@Valid @RequestBody RegisterGuestDto registerGuestDto){
 
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/csv")
+    public void createUsers(@RequestParam("inputFile") MultipartFile file) throws IOException {
+        userService.createUsers(file.getInputStream());
     }
 
     @GetMapping("/me")
