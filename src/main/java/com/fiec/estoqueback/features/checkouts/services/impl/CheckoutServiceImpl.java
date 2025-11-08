@@ -46,4 +46,9 @@ public class CheckoutServiceImpl implements CheckoutService {
 
 
     }
+
+    @Override
+    public void deleteCheckout(String id, User user) {
+        checkoutRepository.softDeleteById(UUID.fromString(id));
+    }
 }
